@@ -1,5 +1,9 @@
 package graph;
 
+import exceptions.DuplicatedNodeException;
+import exceptions.NodeConnectedException;
+import exceptions.NodeException;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Set;
@@ -22,31 +26,48 @@ public class Graph {
         //Debug.log("Graph created: (%d)", this.id);
     }
 
-    /** ------------------------------ */
-
-    public void addNode(Integer cost) {
-        Node node = new Node(cost, this);
-        this.nodes.put(node.getId(), node);
-
-        //Debug.log("New node added: (%d)", node.getId());
+    public Set<Integer> getNodeIds() {
+        return nodes.keySet();
     }
 
-    public void addNode(Integer x, Integer y) {
-        Node node = new Node(0, this, x, y);
+    /** ------------------------------ */
+
+    public Node addNode(Integer nodeId, Integer cost) throws DuplicatedNodeException {
+        Node node = new Node(nodeId, cost, this);
+        this.nodes.put(node.getId(), node);
+        //Debug.log("New node added: (%d)", node.getId());
+        return node;
+    }
+
+    public Node addNode(Integer nodeId, Integer cost, Integer x, Integer y) throws DuplicatedNodeException {
+        Node node = new Node(nodeId, cost, this, x, y);
         this.nodes.put(node.getId(), node);
 
         //Debug.log("New node added: (%d) [%d/%d]", node.getId(), x, y);
+        return node;
     }
 
     public boolean connectNodes(Integer sourceId, Integer destinationId, Integer cost, boolean bidir) {
 
+        // Get our source
         Node source = this.getNode(sourceId);
 
+        // Check if there is such node (not null)
         if(source == null) {
+            //Debug.log("(conenctNodes): Source node->null");
             return false;
         }
 
-        return source.linkWith(destinationId, cost, bidir);
+        // Try to connect
+        Boolean result = false;
+        try {
+            result = source.linkWith(destinationId, cost, bidir);
+        } catch( NodeConnectedException nce ) {
+            // TODO: obsluga
+            System.out.println(String.format("Połączenie %d->%d już istnieje.", sourceId, destinationId));
+            //nce.printStackTrace();
+        }
+        return result;
     }
 
     public ArrayList<Node> getNodeList() {
@@ -55,6 +76,25 @@ public class Graph {
         for(Integer key : keys)
             nodes.add(this.nodes.get(key));
         return nodes;
+    }
+
+    /** ------------------------------ */
+
+    public boolean coherencyTest() {
+        Set<Integer> nodeIdSet = this.getNodeIds();
+
+        if (nodeIdSet.isEmpty()) {
+            return false;
+        }
+
+        Integer expectedValue = nodeIdSet.size() - 1;
+        //System.out.println("Expected value: " + expectedValue);
+        for(Integer key : nodeIdSet) {
+            //System.out.println(String.format("For key %d -> %d", key, this.nodes.get(key).getLinks().size()));
+            if (this.nodes.get(key).getLinks().size() != expectedValue)
+                return false;
+        }
+        return true;
     }
 
     /** ------------------------------ */

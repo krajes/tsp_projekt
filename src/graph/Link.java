@@ -20,6 +20,7 @@ public class Link {
         this.source = source;
         this.destination = destination;
         this.travelCost = travelCost;
+        //Debug.log("Linking %d with %d (Tc: %d)", source.getId(), destination.getId(), travelCost);
     }
 
     /** ------------------------------ */

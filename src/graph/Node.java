@@ -1,14 +1,15 @@
 package graph;
 
+import exceptions.DuplicatedNodeException;
+import exceptions.NodeConnectedException;
+import exceptions.NodeException;
+
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Set;
 
 public class Node {
-
-    /** ------------------------------ */
-
-    private static Integer nodeCounter = 0;
 
     /** ------------------------------ */
 
@@ -21,15 +22,23 @@ public class Node {
 
     /** ------------------------------ */
 
-    public Node(Integer cost, Graph parent) {
+    public Node(Integer nodeId, Integer cost, Graph parent) throws DuplicatedNodeException {
+
         this.cost = cost;
-        this.id = Node.nodeCounter++;
+
+        if (nodeId != -1) {
+            if (parent.hasNode(nodeId)) throw new DuplicatedNodeException();
+            this.id = nodeId;
+        }
+
         this.parent = parent;
         this.linkMap = new HashMap<>();
+
+        // System.out.printf("[Node]: Created node with id %d\n", this.id);
     }
 
-    public Node(Integer cost, Graph parent, Integer x, Integer y) {
-        this(cost, parent);
+    public Node(Integer nodeId, Integer cost, Graph parent, Integer x, Integer y) throws DuplicatedNodeException {
+        this(nodeId, cost, parent);
         this.c2d = new Coordinates2D(x, y);
     }
 
@@ -45,15 +54,18 @@ public class Node {
 
     /** ------------------------------ */
 
-    public boolean linkWith(Integer destination, Integer cost, Boolean bidirectional) {
+    public boolean linkWith(Integer destination, Integer cost, Boolean bidirectional) throws NodeConnectedException {
 
         Node destinationNode = this.getNodeFromParent(destination);
 
         if(destinationNode == null)
             return false;
 
-        if(this.linkMap.containsKey(destination))
-            return false;
+        // Polaczenie z tego wierzcholka do destination juz istnieje
+        if(this.linkMap.containsKey(destination)) {
+            //return false;
+            throw new NodeConnectedException();
+        }
 
         Link link = new Link(this, destinationNode, cost);
         this.addLink(destination, link);
@@ -64,6 +76,12 @@ public class Node {
         }
 
         return true;
+    }
+
+    public Link getLink(Integer destination) {
+        if(this.linkMap.containsKey(destination))
+            return this.linkMap.get(destination);
+        return null;
     }
 
     public boolean removeLink(Integer destination) {

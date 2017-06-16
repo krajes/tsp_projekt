@@ -1,0 +1,54 @@
+{
+    "nodes" :
+    [
+        {"id":"0"},
+        {"id":"1"},
+        {"id":"2"},
+        {"id":"3"}
+    ],
+
+    "indices" :
+    [
+        {
+            "source":"0",
+            "list":
+            [
+                {"destination":"1", "cost":"263"},
+                {"destination":"2", "cost":"433"},
+                {"destination":"3", "cost":"355"}
+            ]
+        },
+
+        {
+            "source":"1",
+            "list":
+            [
+                {"destination":"0", "cost":"663"},
+                {"destination":"2", "cost":"588"},
+                {"destination":"3", "cost":"485"}
+            ]
+        },
+
+        {
+            "source":"2",
+            "list":
+            [
+                {"destination":"0", "cost":"433"},
+                {"destination":"1", "cost":"788"},
+                {"destination":"3", "cost":"699"}
+
+            ]
+        },
+
+        {
+            "source":"3",
+            "list":
+            [
+                {"destination":"0", "cost":"123"},
+                {"destination":"1", "cost":"543"},
+                {"destination":"2", "cost":"255"}
+
+            ]
+        }
+    ]
+}
