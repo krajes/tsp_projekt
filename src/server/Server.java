@@ -382,32 +382,4 @@ public class Server extends JFrame implements ActionListener {
         //debugDisplayTest();
     }
 
-    public static void debugDisplayTest() {
-        // Logic
-        Graph g = new Graph();
-
-        try {
-            for (int i = 0; i < 10; i++)
-                g.addNode(i, 0, 100 + rg.nextInt(900), 100 + rg.nextInt(600));
-        } catch (DuplicatedNodeException dne) {
-            dne.printStackTrace();
-        }
-
-        System.out.println("Coherency test: " + (g.coherencyTest() ? "Passed" : "Failed"));
-
-        for(int inner = 0; inner < g.getNodeList().size(); inner++)
-            for(int outter = 0; outter < g.getNodeList().size(); outter++)
-                if(inner != outter)
-                    g.connectNodes(inner, outter,
-                            10, //g.getNode(inner).getCoordinates().distance(g.getNode(outter).getCoordinates()),
-                            false);
-
-        System.out.println("Coherency test: " + (g.coherencyTest() ? "Passed" : "Failed"));
-
-        g.printConnections();
-        // Wyswietlanie (tylko do debugu)
-        Display display = new Display();
-        display.attachGraph(g);
-    }
-
 }
